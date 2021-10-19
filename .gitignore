@@ -1,0 +1,10 @@
+/docker_volumes
+
+.vscode
+
+**/__pycache__/
+*.py[cod]
+
+*.log
+
+

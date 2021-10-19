@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+<!-- {% load static %} -->
+
+{% block content %}
+<div class="row">
+  <div class="col-12 col-md-6">
+    <form method="post" action="" name="" class="mt-5">
+      <div class="">
+        <p class="h4">Добавить ссылку</p>
+      </div>
+      <div class="mt-4">
+        {% csrf_token %}
+        {% for field in form %}
+        {% if field.errors %}
+        <ul>
+          {% for err in field.errors %}
+          <li>{{ err }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="form-group">
+          <div class="row">
+            <div class="col-5">
+              <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            </div>
+            <div class="col-7">
+              <input type="text" class="form-control" value="" id="{{ field.auto_id }}" name="{{ field.name }}">
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% if non_field_errors.errors %}
+        <ul>
+          {% for err in non_field_errors.errors %}
+          <li>{{ err }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        <input type="submit" value="Добавить" class="submit-btn btn btn-primary"></input>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

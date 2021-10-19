@@ -1,0 +1,30 @@
+version: '3.3'
+  
+services:
+  
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./docker_volumes:/var/lib/mysql
+      - ./conf.d:/etc/mysql/conf.d
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: 1gamehub_user
+      MYSQL_PASSWORD: 1gamehub
+      MYSQL_DATABASE: 1gamehub
+    ports:
+      - "3306:3306" 
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --skip-name-resolve 
+
+  web:
+    command: python ./app/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/var/opt/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db:db
+    build: .

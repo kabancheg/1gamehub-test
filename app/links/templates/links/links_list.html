@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class="table mt-5">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">created at</th>
+      <th scope="col">url</th>
+      <th scope="col">check_interval</th>
+      <th scope="col">status</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for link in object_list %}
+    <tr class="links-to-check" data-interval="{{ link.check_interval }}" data-url="{{ link.url }}">
+      <td>{{ link.pk }}</td>
+      <td>{{ link.created }}</td>
+      <td>{{ link.url }}</td>
+      <td>{{ link.check_interval }}</td>
+      <td class="link-status"></td>
+      <td>
+        <form method="POST" action="{% url 'links:links-delete' link.pk %}">
+          {% csrf_token %}
+          <input type="submit" value="delete" class="btn btn-primary">
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $().ready(function () {
+    $('.links-to-check').each(function () {
+      var $instance = $(this);
+      let period = $instance.data('interval');   
+      let urlToCheck = $instance.data('url');
+      setInterval(function () {
+        $.ajax('/links/check/?url='+urlToCheck)
+        .done(function (res) {
+          $instance.find('.link-status').text(res.status);
+        })
+        .fail(function (error) {
+          console.log(error.responseText)
+        })
+      }, period);
+    })
+  })
+</script>
+{% endblock javascript %}
