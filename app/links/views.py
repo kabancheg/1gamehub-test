@@ -16,7 +16,7 @@ class LinkListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Link.objects.all().order_by('-created') #.filter(user=self.request.user)
+        return Link.objects.filter(user=self.request.user).order_by('-created') #.filter(user=self.request.user)
 
 
 class LinkAddFormView(LoginRequiredMixin, CreateView):
@@ -35,27 +35,31 @@ class LinkAddFormView(LoginRequiredMixin, CreateView):
 class LinkDeleteFormView(LoginRequiredMixin, DeleteView):
     model = Link
 
+    def get_queryset(self):
+        return Link.objects.filter(user=self.request.user) #.filter(user=self.request.user)
+
     def get_success_url(self):
         return reverse('links:links-list')
 
 
-def check(request):
-    url = request.GET.get('url', None)
-    if not url:
+def check(request, pk):
+    if not pk:
         return HttpResponseBadRequest(
             json.dumps({'error': '`url` param is not provided in url.'}), 
             content_type="application/json"
         )
 
+    link = Link.objects.filter(user=request.user, pk=pk).first()
+
     import requests
     try:
-        response = requests.get(url)
+        response = requests.get(link.url)
         status_code = response.status_code
     except requests.ConnectionError:
         status_code = -1
 
     return HttpResponse(
-        json.dumps({'status': status_code, 'url': url}), 
+        json.dumps({'status': status_code, 'pk': link.pk}), 
         content_type="application/json"
     )
 

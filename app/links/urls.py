@@ -9,5 +9,5 @@ urlpatterns = [
     path('add/', views.LinkAddFormView.as_view(), name='links-add'),
     path('delete/<int:pk>/', views.LinkDeleteFormView.as_view(), name='links-delete'),
 
-    path('check/', views.check, name='links-check')
+    path('check/<int:pk>/', views.check, name='links-check')
 ]
