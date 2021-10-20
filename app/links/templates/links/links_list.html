@@ -44,10 +44,10 @@
         .done(function (res) {
           $instance.find('.link-status').text(res.status);
           if (res.status === 200) {
-            $instance.addClass('table-default');
+            $instance.addClass('table-success');
             $instance.removeClass('table-danger');
           } else {
-            $instance.addClass('table-danger');
+            $instance.addClass('table-success');
             $instance.removeClass('table-default');
           }
         })

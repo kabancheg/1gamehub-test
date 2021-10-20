@@ -1,7 +1,10 @@
+import requests
 import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http.response import Http404
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView
 from django.urls import reverse
@@ -16,7 +19,7 @@ class LinkListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Link.objects.filter(user=self.request.user).order_by('-created') #.filter(user=self.request.user)
+        return Link.objects.filter(user=self.request.user).order_by('-created')
 
 
 class LinkAddFormView(LoginRequiredMixin, CreateView):
@@ -42,6 +45,7 @@ class LinkDeleteFormView(LoginRequiredMixin, DeleteView):
         return reverse('links:links-list')
 
 
+@login_required
 def check(request, pk):
     if not pk:
         return HttpResponseBadRequest(
@@ -50,8 +54,9 @@ def check(request, pk):
         )
 
     link = Link.objects.filter(user=request.user, pk=pk).first()
+    if not link:
+        raise Http404
 
-    import requests
     try:
         response = requests.get(link.url)
         status_code = response.status_code

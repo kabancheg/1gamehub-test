@@ -13,4 +13,5 @@ class Link(models.Model):
         auto_now_add=True,
     )
     url = models.URLField(max_length=256)
-    check_interval = models.PositiveIntegerField(blank=True, null=False, default=60*60*5) # default interval is 5 minutes
+    check_interval = models.PositiveIntegerField(blank=True, null=False, default=60*60*5)
+    
