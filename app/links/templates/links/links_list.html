@@ -14,7 +14,7 @@
   </thead>
   <tbody>
     {% for link in object_list %}
-    <tr class="links-to-check" data-interval="{{ link.check_interval }}" data-pk="{{ link.pk }}">
+    <tr class="links-to-check" data-interval="{{ link.check_interval }}" data-url="{% url 'links:links-check' link.pk %}">
       <td>{{ link.pk }}</td>
       <td>{{ link.created }}</td>
       <td>{{ link.url }}</td>
@@ -38,17 +38,17 @@
     $('.links-to-check').each(function () {
       var $instance = $(this);
       let period = $instance.data('interval');   
-      let urlToCheck = $instance.data('pk');
+      let urlToCheck = $instance.data('url');
       setInterval(function () {
-        $.ajax('/links/check/'+urlToCheck)
+        $.ajax(urlToCheck)
         .done(function (res) {
           $instance.find('.link-status').text(res.status);
           if (res.status === 200) {
             $instance.addClass('table-success');
             $instance.removeClass('table-danger');
           } else {
-            $instance.addClass('table-success');
-            $instance.removeClass('table-default');
+            $instance.addClass('table-danger');
+            $instance.removeClass('table-success');
           }
         })
         .fail(function (error) {
