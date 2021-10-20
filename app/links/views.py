@@ -57,11 +57,12 @@ def check(request, pk):
     if not link:
         raise Http404
 
+    status_code = -1
     try:
         response = requests.get(link.url)
         status_code = response.status_code
     except requests.ConnectionError:
-        status_code = -1
+        pass
 
     return HttpResponse(
         json.dumps({'status': status_code, 'pk': link.pk}), 
